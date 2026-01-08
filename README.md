@@ -5,7 +5,7 @@
 </a>
 
 ![Stars](https://t.me/FakeAaru)
-![Forks](https://t.me/FakeAaru)
+![Forks](https://github.com/arclx724/RealAaru/forks)
 
 ----------------------------------------------------
 A **Group Manager Bot** built with **Pyrogram** + **MongoDB** for managing Telegram groups
