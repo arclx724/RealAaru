@@ -34,7 +34,7 @@ A **Group Manager Bot** built with **Pyrogram** + **MongoDB** for managing Teleg
 
 <p align="center">
   <!-- Upgraded Video Button -->
-  <a href="https://youtu.be/35zzgtJIw8Q?si=d6eNOWxyutTlHgMz" target="_blank">
+  <a href="https://t.me/FakeAaru" target="_blank">
     <img src="https://img.shields.io/badge/Watch%20Tutorial-red?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Tutorial">
   </a>
 
@@ -136,17 +136,17 @@ python3 main.py
 ## 📱 Connect with Me
 
 <p align="center">
-<a href="https://www.instagram.com/learning_bots"><img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white"></a>
-<a href="https://t.me/LearningBotsCommunity"><img src="https://img.shields.io/badge/Telegram%20Group-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white"></a>
-<a href="https://t.me/learning_bots"><img src="https://img.shields.io/badge/Telegram%20Channel-0088cc?style=for-the-badge&logo=telegram&logoColor=white"></a>
-<a href="https://youtube.com/@learning_bots?si=aNUuRSfZD7na78GM"><img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white"></a>
+<a href="https://t.me/FakeAaru"><img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white"></a>
+<a href="https://t.me/FakeAaru"><img src="https://img.shields.io/badge/Telegram%20Group-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white"></a>
+<a href="https://t.me/FakeAaru"><img src="https://img.shields.io/badge/Telegram%20Channel-0088cc?style=for-the-badge&logo=telegram&logoColor=white"></a>
+<a href="https://t.me/FakeAaru"><img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white"></a>
 </p>
 
 ---
 
 ## ⚠️ License / Usage Terms
 
-This project is open-source under a **custom license** by [Yash](https://github.com/LearningBotsOfficial).
+This project is open-source under a **custom license** by [➺ 𝐅α𝗄𝖾 𝚲ᥲ𝗋υυυ♡](https://t.me/FakeAaru).
 
 ✅ You Can:
 - Use this code for personal or educational purposes  
@@ -159,14 +159,14 @@ This project is open-source under a **custom license** by [Yash](https://github.
 - Claim ownership or re-upload it without permission  
 
 If you want to use this project commercially,  
-please contact the author at [LearningBotsOfficial](https://t.me/LearningBotsOfficial).
+please contact the author at [➺ 𝐅α𝗄𝖾 𝚲ᥲ𝗋υυυ♡](https://t.me/FakeAaru).
 
 ---
 
-**Author:** [LearningBotsOfficial](https://github.com/LearningBotsOfficial)  
-**Support Group:** [@LearningBotsCommunity](https://t.me/LearningBotsCommunity)  
-**Update Channel:** [@learning_bots](https://t.me/learning_bots)  
-**YouTube:** [Learning Bots](https://youtube.com/@learning_bots)
+**Author:** [LearningBotsOfficial](https://t.me/FakeAaru)  
+**Support Group:** [@LearningBotsCommunity](https://t.me/FakeAaru)  
+**Update Channel:** [@learning_bots](https://t.me/FakeAaru)  
+**YouTube:** [Learning Bots](https://t.me/FakeAaru)
 
 
 <div align="center">
