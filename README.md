@@ -4,8 +4,8 @@
   <img src="https://files.catbox.moe/4p4kue.jpg" width="300" height="300" />
 </a>
 
-![Stars](https://img.shields.io/github/stars/LearningBotsOfficial/Nomade)
-![Forks](https://img.shields.io/github/forks/LearningBotsOfficial/Nomade)
+![Stars](https://t.me/FakeAaru)
+![Forks](https://t.me/FakeAaru)
 
 ----------------------------------------------------
 A **Group Manager Bot** built with **Pyrogram** + **MongoDB** for managing Telegram groups
@@ -105,11 +105,11 @@ DB_NAME=Cluster0
 
 # Owner and Bot Info
 OWNER_ID=
-BOT_USERNAME=NomadeHelpBot
+BOT_USERNAME=BillieMusicBot
 
 # Links & Visuals
-SUPPORT_GROUP=https://t.me/LearningBotsCommunity
-UPDATE_CHANNEL=https://t.me/LearningBotsOfficial
+SUPPORT_GROUP=https://t.me/FakeAaru
+UPDATE_CHANNEL=https://t.me/FakeAaru
 START_IMAGE=https://files.catbox.moe/j2yhce.jpg
 
 ```
@@ -163,10 +163,10 @@ please contact the author at [➺ 𝐅α𝗄𝖾 𝚲ᥲ𝗋υυυ♡](https://t
 
 ---
 
-**Author:** [LearningBotsOfficial](https://t.me/FakeAaru)  
-**Support Group:** [@LearningBotsCommunity](https://t.me/FakeAaru)  
-**Update Channel:** [@learning_bots](https://t.me/FakeAaru)  
-**YouTube:** [Learning Bots](https://t.me/FakeAaru)
+**Author:** [ㅤ➺ 𝐅α𝗄𝖾 𝚲ᥲ𝗋υυυ♡](https://t.me/FakeAaru)  
+**Support Group:** [➺ 𝐅α𝗄𝖾 𝚲ᥲ𝗋υυυ♡](https://t.me/FakeAaru)  
+**Update Channel:** [ㅤ➺ 𝐅α𝗄𝖾 𝚲ᥲ𝗋υυυ♡](https://t.me/FakeAaru)  
+**YouTube:** [ㅤ➺ 𝐅α𝗄𝖾 𝚲ᥲ𝗋υυυ♡](https://t.me/FakeAaru)
 
 
 <div align="center">
