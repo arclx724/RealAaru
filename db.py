@@ -1,19 +1,32 @@
 import motor.motor_asyncio
 from config import MONGO_URI, DB_NAME
 import logging
+import sys
 
-# setup logging
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format='[%(levelname)s] %(asctime)s - %(message)s'
 )
 
+# Global variable define kar rahe hain taaki ImportError na aaye
+client = None
+db = None
+
+# Step 1: Check karein ki MONGO_URI hai ya nahi
+if not MONGO_URI:
+    logging.error("❌ MONGO_URI empty hai! Kripya config.py ya .env file check karein.")
+    sys.exit(1)
+
 try:
+    # Step 2: Connection establish karein
     client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
     db = client[DB_NAME]
     logging.info("✅ MongoDB connected successfully!")
 except Exception as e:
     logging.error(f"❌ Failed to connect to MongoDB: {e}")
+    # Agar DB connect nahi hua to bot ko yahi rok dena behtar hai
+    sys.exit(1)
 
 # ==========================================================
 # 🟢 WELCOME MESSAGE SYSTEM
@@ -85,14 +98,14 @@ async def reset_warns(chat_id: int, user_id: int):
     )
 
 # ==========================================================
-# 🧹 CLEANUP UTILS (Optional)
+# 🧹 CLEANUP UTILS
 # ==========================================================
 
 async def clear_group_data(chat_id: int):
     await db.welcome.delete_one({"chat_id": chat_id})
     await db.locks.delete_one({"chat_id": chat_id})
     await db.warns.delete_many({"chat_id": chat_id})
-
+    await db.anticheater_settings.delete_one({"chat_id": chat_id})
 
 # ==========================================================
 # 👤 USER SYSTEM (for broadcast)
@@ -108,7 +121,6 @@ async def get_all_users():
     cursor = db.users.find({}, {"_id": 0, "user_id": 1})
     users = []
     async for document in cursor:
-        # Make sure the document has 'user_id'
         if "user_id" in document:
             users.append(document["user_id"])
     return users
@@ -132,7 +144,6 @@ async def get_anticheater(chat_id: int) -> bool:
 
 async def add_admin_action(chat_id: int, admin_id: int) -> int:
     """Admin ke actions (ban/kick) ko count karne ke liye"""
-    # Action count badhane ke liye $inc ka use karein
     data = await db.admin_actions.find_one_and_update(
         {"chat_id": chat_id, "admin_id": admin_id},
         {"$inc": {"count": 1}},
@@ -142,6 +153,6 @@ async def add_admin_action(chat_id: int, admin_id: int) -> int:
     return data.get("count", 0)
 
 async def reset_admin(chat_id: int, admin_id: int):
-    """Admin ke actions reset karne ke liye (jab wo demote ho jaye)"""
+    """Admin ke actions reset karne ke liye"""
     await db.admin_actions.delete_one({"chat_id": chat_id, "admin_id": admin_id})
     
