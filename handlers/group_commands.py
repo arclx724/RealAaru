@@ -1,17 +1,56 @@
-from pyrogram import Client, filters
-from pyrogram.types import Message, ChatMemberUpdated, ChatPermissions, ChatPrivileges
-from pyrogram.enums import ChatMemberStatus
-from pyrogram.raw import types
 import logging
+from pyrogram import Client, filters
+from pyrogram.types import (
+    Message,
+    ChatMemberUpdated,
+    ChatPermissions,
+    ChatPrivileges
+)
+from pyrogram.enums import ChatMemberStatus
 import db
 
 DEFAULT_WELCOME = "👋 Welcome {first_name} to {title}!"
+ADMIN_LIMIT = 10  # Anti-Cheater limit
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 def register_group_commands(app: Client):
+
+    # ==========================================================
+# POWER CHECKS
+# ==========================================================
+    async def is_admin(client, chat_id, user_id):
+        member = await client.get_chat_member(chat_id, user_id)
+        return member.status in (
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.OWNER
+        )
+
+    async def is_owner(client, chat_id, user_id):
+        member = await client.get_chat_member(chat_id, user_id)
+        return member.status == ChatMemberStatus.OWNER
+
+
+# ==========================================================
+# 👮 ANTI-CHEATER ON / OFF (OWNER ONLY)
+# ==========================================================
+    @app.on_message(filters.group & filters.command("anticheater"))
+    async def anticheater_toggle(client, message: Message):
+        if not await is_owner(client, message.chat.id, message.from_user.id):
+            return await message.reply_text("❌ Only group owner can use this command.")
+
+        args = message.text.split()
+        if len(args) != 2 or args[1] not in ("on", "off"):
+            return await message.reply_text("⚙️ Usage: /anticheater on | off")
+
+        status = args[1] == "on"
+        await db.set_anticheater(message.chat.id, status)
+
+        await message.reply_text(
+            "🛡️ Anti-Cheater ENABLED" if status else "⚠️ Anti-Cheater DISABLED"
+        )
 
     # ==========================================================
     # WELCOME SYSTEM
@@ -476,4 +515,91 @@ def register_group_commands(app: Client):
         if target_member.status == ChatMemberStatus.OWNER:
             return await message.reply_text("⚠️ You cannot demote the group owner.")
         if user.id == message.from_user.id:
-            return await message.reply_text("❌ You cannot de
+            return await message.reply_text("❌ You cannot demote yourself.")
+    
+        try:
+            no_privileges = ChatPrivileges(
+                can_manage_chat=False,
+                can_delete_messages=False,
+                can_manage_video_chats=False,
+                can_restrict_members=False,
+                can_promote_members=False,
+                can_change_info=False,
+                can_invite_users=False,
+                can_pin_messages=False,
+                can_post_messages=False,
+                can_edit_messages=False,
+                is_anonymous=False
+            )
+    
+            await client.promote_chat_member(
+                chat_id=message.chat.id,
+                user_id=user.id,
+                privileges=no_privileges
+            )
+            await message.reply_text(f"✅ {user.mention} has been demoted from admin.")
+    
+        except Exception as e:
+            if "CHAT_ADMIN_REQUIRED" in str(e):
+                await message.reply_text("❌ Bot must be admin with 'Add Admins' permission to demote.")
+            else:
+                await message.reply_text(f"⚠️ Failed to demote: {e}")
+
+
+# ==========================================================
+# 👮 ANTI-CHEATER CORE (AUTO)
+# ==========================================================
+    @app.on_chat_member_updated()
+    async def anti_cheater_core(client, cmu: ChatMemberUpdated):
+        try:
+            if not cmu.from_user:
+                return
+
+            chat_id = cmu.chat.id
+
+            if not await db.get_anticheater(chat_id):
+                return
+
+            if (
+                cmu.old_chat_member.status == ChatMemberStatus.MEMBER
+                and cmu.new_chat_member.status
+                in (ChatMemberStatus.BANNED, ChatMemberStatus.LEFT)
+            ):
+                admin = cmu.from_user
+
+                admin_status = await client.get_chat_member(chat_id, admin.id)
+                if admin_status.status == ChatMemberStatus.OWNER:
+                    return
+
+                count = await db.add_admin_action(chat_id, admin.id)
+
+                if count > ADMIN_LIMIT:
+                    await client.promote_chat_member(
+                        chat_id,
+                        admin.id,
+                        ChatPrivileges(
+                            can_manage_chat=False,
+                            can_delete_messages=False,
+                            can_restrict_members=False,
+                            can_invite_users=False,
+                            can_pin_messages=False
+                        )
+                    )
+
+                    await client.send_message(
+                        chat_id,
+                        f"""
+🚨 **ANTI-CHEATER ALERT**
+
+👤 Admin: {admin.mention}
+📊 Actions: {count}/{ADMIN_LIMIT}
+
+❌ Admin auto-demoted
+🛡️ Group protected
+"""
+                    )
+
+                    await db.reset_admin(chat_id, admin.id)
+
+        except Exception as e:
+            logger.error(f"Anti-Cheater Error: {e}")
