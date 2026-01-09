@@ -112,3 +112,36 @@ async def get_all_users():
         if "user_id" in document:
             users.append(document["user_id"])
     return users
+
+# ==========================================================
+# 🛡️ ANTI-CHEATER SYSTEM
+# ==========================================================
+
+async def set_anticheater(chat_id: int, status: bool):
+    """Anti-cheater mode ko on ya off karne ke liye"""
+    await db.anticheater_settings.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"enabled": status}},
+        upsert=True
+    )
+
+async def get_anticheater(chat_id: int) -> bool:
+    """Check karne ke liye ki anti-cheater on hai ya nahi"""
+    data = await db.anticheater_settings.find_one({"chat_id": chat_id})
+    return data.get("enabled", False) if data else False
+
+async def add_admin_action(chat_id: int, admin_id: int) -> int:
+    """Admin ke actions (ban/kick) ko count karne ke liye"""
+    # Action count badhane ke liye $inc ka use karein
+    data = await db.admin_actions.find_one_and_update(
+        {"chat_id": chat_id, "admin_id": admin_id},
+        {"$inc": {"count": 1}},
+        upsert=True,
+        return_document=True
+    )
+    return data.get("count", 0)
+
+async def reset_admin(chat_id: int, admin_id: int):
+    """Admin ke actions reset karne ke liye (jab wo demote ho jaye)"""
+    await db.admin_actions.delete_one({"chat_id": chat_id, "admin_id": admin_id})
+    
