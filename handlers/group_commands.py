@@ -21,7 +21,6 @@ def register_group_commands(app: Client):
         member = await client.get_chat_member(chat_id, user_id)
         return member.status == ChatMemberStatus.OWNER
 
-
 # ==========================================================
 # 👮 ANTI-CHEATER TOGGLE (OWNER ONLY)
 # ==========================================================
@@ -41,9 +40,8 @@ def register_group_commands(app: Client):
             "🛡️ Anti-Cheater ENABLED" if status else "⚠️ Anti-Cheater DISABLED"
         )
 
-
 # ==========================================================
-# 👮 ANTI-CHEATER CORE (FIXED)
+# 👮 ANTI-CHEATER CORE (BAN + KICK FIXED)
 # ==========================================================
     @app.on_chat_member_updated()
     async def anti_cheater_core(client, cmu: ChatMemberUpdated):
@@ -58,43 +56,64 @@ def register_group_commands(app: Client):
                 return
 
             admin = cmu.from_user
+            old = cmu.old_chat_member
+            new = cmu.new_chat_member
 
             # Ignore bot actions
             if admin.is_bot:
                 return
 
-            old = cmu.old_chat_member
-            new = cmu.new_chat_member
-
-            # ❌ IGNORE self-leave
-            if old.status == ChatMemberStatus.MEMBER and new.status == ChatMemberStatus.LEFT:
+            # Ignore owner completely
+            admin_status = await client.get_chat_member(chat_id, admin.id)
+            if admin_status.status == ChatMemberStatus.OWNER:
                 return
 
-            # ✅ COUNT only real BAN / KICK
-            if old.status == ChatMemberStatus.MEMBER and new.status == ChatMemberStatus.BANNED:
+            # ❌ IGNORE SELF-LEAVE
+            if (
+                old.status == ChatMemberStatus.MEMBER
+                and new.status == ChatMemberStatus.LEFT
+                and admin.id == new.user.id
+            ):
+                return
 
-                admin_status = await client.get_chat_member(chat_id, admin.id)
-                if admin_status.status == ChatMemberStatus.OWNER:
-                    return
+            action = False
 
-                count = await db.add_admin_action(chat_id, admin.id)
+            # ✅ REAL BAN
+            if (
+                old.status == ChatMemberStatus.MEMBER
+                and new.status == ChatMemberStatus.BANNED
+            ):
+                action = True
 
-                if count > ADMIN_LIMIT:
-                    await client.promote_chat_member(
-                        chat_id,
-                        admin.id,
-                        ChatPrivileges(
-                            can_manage_chat=False,
-                            can_delete_messages=False,
-                            can_restrict_members=False,
-                            can_invite_users=False,
-                            can_pin_messages=False
-                        )
+            # ✅ REAL KICK (ADMIN removed member)
+            elif (
+                old.status == ChatMemberStatus.MEMBER
+                and new.status == ChatMemberStatus.LEFT
+                and admin.id != new.user.id
+            ):
+                action = True
+
+            if not action:
+                return
+
+            count = await db.add_admin_action(chat_id, admin.id)
+
+            if count > ADMIN_LIMIT:
+                await client.promote_chat_member(
+                    chat_id,
+                    admin.id,
+                    ChatPrivileges(
+                        can_manage_chat=False,
+                        can_delete_messages=False,
+                        can_restrict_members=False,
+                        can_invite_users=False,
+                        can_pin_messages=False
                     )
+                )
 
-                    await client.send_message(
-                        chat_id,
-                        f"""
+                await client.send_message(
+                    chat_id,
+                    f"""
 🚨 **ANTI-CHEATER ALERT**
 
 👤 Admin: {admin.mention}
@@ -103,9 +122,9 @@ def register_group_commands(app: Client):
 ❌ Admin auto-demoted
 🛡️ Group protected
 """
-                    )
+                )
 
-                    await db.reset_admin(chat_id, admin.id)
+                await db.reset_admin(chat_id, admin.id)
 
         except Exception as e:
             logger.error(f"Anti-Cheater Error: {e}")
