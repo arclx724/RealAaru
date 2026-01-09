@@ -15,12 +15,13 @@ def register_handlers(app: Client):
     async def send_start_menu(message, user):
         text = f"""
 
-   ✨ Hello {user}! ✨
+   ✨ Heyaaa {user}! ✨
 
-👋 I am Nomad 🤖 
+👋 It's me your Billie 👮🏻‍♀ 
 
 Highlights:
 ─────────────────────────────
+- AI based Anti-ban all Protection 
 - Smart Anti-Spam & Link Shield
 - Adaptive Lock System (URLs, Media, Language & more)
 - Modular & Scalable Protection
