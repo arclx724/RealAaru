@@ -190,6 +190,7 @@ Manage your group easily with these tools:
 ¤ /warn <user> — Add warning (3 = mute)  
 ¤ /warns <user> — View warnings  
 ¤ /resetwarns <user> — Clear all warnings  
+¤ /anticheater on/off — Enable or disable ban all protection  
 ¤ /promote <user> — make admin
 ¤ /demote <user> — remove from admin  
 
